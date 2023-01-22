@@ -1,8 +1,12 @@
-import chalk from 'chalk';
+import express from 'express';
+import controller from '../controllers/User';
 
-export default class Logging {
-    public static log = (args: any) => this.info(args);
-    public static info = (args: any) => console.log(chalk.blue(`[${new Date().toLocaleString()}] [INFO]`), typeof args == 'string' ? chalk.blueBright(args) : args);
-    public static warn = (args: any) => console.log(chalk.yellow(`[${new Date().toLocaleString()}] [INFO]`), typeof args == 'string' ? chalk.yellowBright(args) : args);
-    public static error = (args: any) => console.log(chalk.red(`[${new Date().toLocaleString()}] [INFO]`), typeof args == 'string' ? chalk.redBright(args) : args);
-}
+const router = express.Router();
+
+router.post('/create', controller.createUser);
+router.get('/get/:userId', controller.readUser);
+router.get('/get/', controller.readAll);
+router.patch('/update/:userId', controller.updateUser);
+router.delete('/delete/:userId', controller.deleteUser);
+
+export = router;
