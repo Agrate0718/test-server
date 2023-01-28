@@ -1,67 +1,96 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
+import Logging from '../library/Logging';
 import User from '../models/User';
+import bcryptjs from 'bcryptjs';
 
-const createUser = (req: Request, res: Response, next: NextFunction) => {
-    const { name1, name2, email, password } = req.body;
+const validateToken = (req: Request, res: Response, next: NextFunction) => {
+    Logging.info('Token validated, user authorized');
 
-    const user = new User({
-        _id: new mongoose.Types.ObjectId(),
-        name1,
-        name2,
-        email,
-        password
+    return res.status(200).json({
+        message: 'Authorized'
     });
-
-    return user
-        .save()
-        .then((user) => res.status(201).json({ user }))
-        .catch((error) => res.status(500).json({ error }));
 };
 
-const readUser = (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.userId;
+const register = (req: Request, res: Response, next: NextFunction) => {
+    let { name1, password } = req.body;
 
-    return User.findById(userId)
-        .then((user) =>
-            user
-                ? res.status(200).json({ user })
-                : res.status(404).json({
-                      message: 'Not found'
-                  })
-        )
-        .catch((error) => res.status(500).json({ error }));
+    bcryptjs.hash(password, 10, (hashError, hash) => {
+        if (hashError) {
+            return res.status(500).json({
+                message: hashError.message,
+                error: hashError
+            });
+        }
+    });
 };
 
-const readAll = (req: Request, res: Response, next: NextFunction) => {
-    return User.find()
-        .then((users) => res.status(200).json({ users }))
-        .catch((error) => res.status(500).json({ error }));
-};
-const updateUser = (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.userId;
+const login = (req: Request, res: Response, next: NextFunction) => {};
 
-    return User.findById(userId)
-        .then((user) => {
-            if (user) {
-                user.set(req.body);
+const getAllusers = (req: Request, res: Response, next: NextFunction) => {};
 
-                return user
-                    .save()
-                    .then((user) => res.status(201).json({ user }))
-                    .catch((error) => res.status(500).json({ error }));
-            } else {
-                res.status(404).json({ message: 'Not found' });
-            }
-        })
-        .catch((error) => res.status(500).json({ error }));
-};
-const deleteUser = (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.params.userId;
+export default { validateToken, register, login, getAllusers };
 
-    return User.findByIdAndDelete(userId)
-        .then((user) => (user ? res.status(201).json({ message: 'deleted' }) : res.status(404).json({ message: 'Not found' })))
-        .catch((error) => res.status(500).json({ error }));
-};
+// const createUser = (req: Request, res: Response, next: NextFunction) => {
+//     const { name1, name2, email, password } = req.body;
 
-export default { createUser, readUser, readAll, updateUser, deleteUser };
+//     const user = new User({
+//         _id: new mongoose.Types.ObjectId(),
+//         name1,
+//         name2,
+//         email,
+//         password
+//     });
+
+//     return user
+//         .save()
+//         .then((user) => res.status(201).json({ user }))
+//         .catch((error) => res.status(500).json({ error }));
+// };
+
+// const readUser = (req: Request, res: Response, next: NextFunction) => {
+//     const userId = req.params.userId;
+
+//     return User.findById(userId)
+//         .then((user) =>
+//             user
+//                 ? res.status(200).json({ user })
+//                 : res.status(404).json({
+//                       message: 'Not found'
+//                   })
+//         )
+//         .catch((error) => res.status(500).json({ error }));
+// };
+
+// const readAll = (req: Request, res: Response, next: NextFunction) => {
+//     return User.find()
+//         .then((users) => res.status(200).json({ users }))
+//         .catch((error) => res.status(500).json({ error }));
+// };
+// const updateUser = (req: Request, res: Response, next: NextFunction) => {
+//     const userId = req.params.userId;
+
+//     return User.findById(userId)
+//         .then((user) => {
+//             if (user) {
+//                 user.set(req.body);
+
+//                 return user
+//                     .save()
+//                     .then((user) => res.status(201).json({ user }))
+//                     .catch((error) => res.status(500).json({ error }));
+//             } else {
+//                 res.status(404).json({ message: 'Not found' });
+//             }
+//         })
+//         .catch((error) => res.status(500).json({ error }));
+// };
+// const deleteUser = (req: Request, res: Response, next: NextFunction) => {
+//     const userId = req.params.userId;
+
+//     return User.findByIdAndDelete(userId)
+//         .then((user) => (user ? res.status(201).json({ message: 'deleted' }) : res.status(404).json({ message: 'Not found' })))
+//         .catch((error) => res.status(500).json({ error }));
+// };
+
+// export default { createUser, readUser, readAll, updateUser, deleteUser };
