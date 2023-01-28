@@ -3,6 +3,10 @@ import mongoose from 'mongoose';
 import Logging from '../library/Logging';
 import User from '../models/User';
 import bcryptjs from 'bcryptjs';
+import loggings from '../library/loggings';
+import signJWT from '../functions/signJWT';
+
+const NAMESPACE = 'User';
 
 const validateToken = (req: Request, res: Response, next: NextFunction) => {
     Logging.info('Token validated, user authorized');
@@ -13,7 +17,7 @@ const validateToken = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const register = (req: Request, res: Response, next: NextFunction) => {
-    let { name1, password } = req.body;
+    let { name1, password, name2, email } = req.body;
 
     bcryptjs.hash(password, 10, (hashError, hash) => {
         if (hashError) {
@@ -22,12 +26,85 @@ const register = (req: Request, res: Response, next: NextFunction) => {
                 error: hashError
             });
         }
+
+        const user: any = new User({
+            _id: new mongoose.Types.ObjectId(),
+            name1,
+            name2,
+            email,
+            password: hash
+        });
+
+        return user
+            .save()
+            .then((user: any) => res.status(201).json({ user }))
+            .catch((error: any) => res.status(500).json({ error }));
     });
 };
 
-const login = (req: Request, res: Response, next: NextFunction) => {};
+const login = (req: Request, res: Response, next: NextFunction) => {
+    let { name1, password } = req.body;
 
-const getAllusers = (req: Request, res: Response, next: NextFunction) => {};
+    User.find({ name1 })
+        .exec()
+        .then((users) => {
+            if (users.length !== 1) {
+                return res.status(401).json({
+                    message: 'Unauthorized'
+                });
+            }
+
+            bcryptjs.compare(password, users[0].password, (error, result) => {
+                if (error) {
+                    loggings.error(NAMESPACE, error.message, error);
+                    return res.status(401).json({
+                        message: 'Unauthorized'
+                    });
+                } else if (result) {
+                    signJWT(users[0], (_error, token) => {
+                        if (_error) {
+                            loggings.error(NAMESPACE, ' Unable to sign token:', _error);
+
+                            return res.status(401).json({
+                                messsage: 'Unauthorized',
+                                error: _error
+                            });
+                        } else if (token) {
+                            return res.status(200).json({
+                                message: 'Auth Successful',
+                                token,
+                                user: users[0]
+                            });
+                        }
+                    });
+                }
+            });
+        })
+        .catch((error) => {
+            return res.status(500).json({
+                message: error.message,
+                error
+            });
+        });
+};
+
+const getAllusers = (req: Request, res: Response, next: NextFunction) => {
+    User.find()
+        .select('-passord')
+        .exec()
+        .then((users) => {
+            return res.status(200).json({
+                users,
+                count: users.length
+            });
+        })
+        .catch((error) => {
+            return res.status(500).json({
+                message: error.message,
+                error
+            });
+        });
+};
 
 export default { validateToken, register, login, getAllusers };
 
