@@ -84,7 +84,7 @@ const login = (req, res, next) => {
 };
 const getAllusers = (req, res, next) => {
     User_1.default.find()
-        .select('-passord')
+        .select('-password')
         .exec()
         .then((users) => {
         return res.status(200).json({

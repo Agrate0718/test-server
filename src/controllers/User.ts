@@ -90,7 +90,7 @@ const login = (req: Request, res: Response, next: NextFunction) => {
 
 const getAllusers = (req: Request, res: Response, next: NextFunction) => {
     User.find()
-        .select('-passord')
+        .select('-password')
         .exec()
         .then((users) => {
             return res.status(200).json({
