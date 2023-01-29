@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+
 const info = (namespace: string, message: string, object?: any) => {
     if (object) {
         console.info(`[${getTimeStamp()}] [INFO] [${namespace}] ${message}`, object);
@@ -16,9 +18,9 @@ const warn = (namespace: string, message: string, object?: any) => {
 
 const error = (namespace: string, message: string, object?: any) => {
     if (object) {
-        console.error(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`, object);
+        console.error(chalk.red(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`, object));
     } else {
-        console.error(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`);
+        console.error(chalk.red(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`));
     }
 };
 

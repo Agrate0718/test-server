@@ -1,5 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const chalk_1 = __importDefault(require("chalk"));
 const info = (namespace, message, object) => {
     if (object) {
         console.info(`[${getTimeStamp()}] [INFO] [${namespace}] ${message}`, object);
@@ -18,10 +22,10 @@ const warn = (namespace, message, object) => {
 };
 const error = (namespace, message, object) => {
     if (object) {
-        console.error(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`, object);
+        console.error(chalk_1.default.red(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`, object));
     }
     else {
-        console.error(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`);
+        console.error(chalk_1.default.red(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`));
     }
 };
 const debug = (namespace, message, object) => {
