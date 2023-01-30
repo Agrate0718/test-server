@@ -15,5 +15,6 @@ router.get('/validate', extractJWt, controller.validateToken);
 router.post('/register', controller.register);
 router.post('/login', controller.login);
 router.get('/get/all', controller.getAllusers);
+router.get('/delete/:name1', controller.deleteUser);
 
 export = router;

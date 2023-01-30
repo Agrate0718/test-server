@@ -15,4 +15,5 @@ router.get('/validate', extractJWT_1.default, User_1.default.validateToken);
 router.post('/register', User_1.default.register);
 router.post('/login', User_1.default.login);
 router.get('/get/all', User_1.default.getAllusers);
+router.get('/delete/:name1', User_1.default.deleteUser);
 module.exports = router;

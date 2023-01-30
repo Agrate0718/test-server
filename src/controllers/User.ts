@@ -106,7 +106,16 @@ const getAllusers = (req: Request, res: Response, next: NextFunction) => {
         });
 };
 
-export default { validateToken, register, login, getAllusers };
+const deleteUser = (req: Request, res: Response, next: NextFunction) => {
+    const name1 = req.params.name1;
+    console.log('name1:', name1);
+
+    return User.findOneAndDelete({ name1: name1 })
+        .then((user) => (user ? res.status(201).json({ message: 'deleted' }) : res.status(404).json({ message: 'Not found' })))
+        .catch((error) => res.status(500).json({ error }));
+};
+
+export default { validateToken, register, login, getAllusers, deleteUser };
 
 // const createUser = (req: Request, res: Response, next: NextFunction) => {
 //     const { name1, name2, email, password } = req.body;
