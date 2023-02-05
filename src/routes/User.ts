@@ -11,9 +11,9 @@ const router = express.Router();
 // router.patch('/update/:userId', ValidateSchema(Schemas.user.update), controller.updateUser);
 // router.delete('/delete/:userId', controller.deleteUser);
 
-router.get('/validate', extractJWt, controller.validateToken);
-router.post('/register', controller.register);
-router.post('/login', controller.login);
+router.get('/validate', extractJWt, ValidateSchema, controller.validateToken);
+router.post('/register', ValidateSchema, controller.register);
+router.post('/login', ValidateSchema, controller.login);
 router.get('/get/all', controller.getAllusers);
 router.get('/delete/:name1', controller.deleteUser);
 
